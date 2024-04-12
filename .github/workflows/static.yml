@@ -26,7 +26,7 @@
                 navigator.geolocation.getCurrentPosition(function(position) {
                     generateQRCode(position.coords.latitude, position.coords.longitude);
                 }, function(error) {
-                    alert('Geolocation error: ' + error.message);
+                    alert('Geolocation error: '
                 });
             } else {
                 alert("Geolocation is not supported by this browser.");
