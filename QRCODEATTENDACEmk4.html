@@ -3,50 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance System</title>
+    <title>Email QR Code Generator</title>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 </head>
 <body>
+    <h1>Generate Email QR Code</h1>
+    <form id="emailForm">
+        <input type="text" id="userCode" name="code" placeholder="Enter your code (will be the subject)" required>
+        <button type="button" onclick="requestLocation()">Generate QR Code</button>
+    </form>
     <div id="qrcode"></div>
-    <button onclick="generateQRCodeAndRefresh()">Generate QR Code</button>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initial QR code generation upon loading the page
-            generateQRCodeAndRefresh();
-
-            // Adding pagehide instead of unload for modern browsers
-            window.addEventListener('pagehide', function() {
-                console.log('Page is being hidden. Perform any cleanup here.');
-            });
-        });
-
-        function generateQRCodeAndRefresh() {
+        function requestLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(position) {
-                    generateQRCode(position.coords.latitude, position.coords.longitude);
+                    generateEmail(position.coords.latitude, position.coords.longitude);
                 }, function(error) {
                     alert('Geolocation error: ' + error.message);
+                    // Proceed without location if there's an error
+                    generateEmail();
                 });
             } else {
                 alert("Geolocation is not supported by this browser.");
+                // Proceed without location if not supported
+                generateEmail();
             }
         }
 
-        function generateQRCode(latitude, longitude) {
-            var employeeName = "John Doe"; // Adjust as necessary
-            var subject = "Attendance Check-in for " + employeeName;
-            var body = "Latitude: " + latitude + "\nLongitude: " + longitude;
-            var encodedBody = encodeURIComponent(body);
-            var url = "mailto:attendance@example.com?subject=" + encodeURIComponent(subject) + "&body=" + encodedBody;
+        function generateEmail(latitude = '', longitude = '') {
+            var userCode = document.getElementById('userCode').value.trim();
+            if (!userCode) {
+                alert("Please enter the code.");
+                return;
+            }
 
+            var subject = userCode;  // Using the code as the subject
+            var userName = "John Doe";  // Pre-filled user name
+            var userEmpNumber = "123456";  // Pre-filled employee number
+            var location = latitude && longitude ? `Latitude: ${latitude}, Longitude: ${longitude}` : "Location not available";
+
+            // Formulating the body of the email
+            var body = encodeURIComponent(`${userName}\n${userEmpNumber}\n${location}`);
+
+            // Create mailto link with subject and body
+            var url = "mailto:example@example.com?subject=" + encodeURIComponent(subject) + "&body=" + body;
+
+            // Generate QR Code with the mailto link
             new QRCode(document.getElementById('qrcode'), {
                 text: url,
                 width: 200,
-                height: 200
+                height: 200,
+                correctLevel : QRCode.CorrectLevel.H
             });
         }
     </script>
 </body>
 </html>
-
