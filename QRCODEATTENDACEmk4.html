@@ -4,24 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Attendance System</title>
+  <style>
+    #generateQR {
+      padding: 10px 20px; /* Add padding */
+      font-size: 16px; /* Increase font size */
+    }
+  </style>
   <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 </head>
 <body>
+  <button id="generateQR">Scan Employee QR Code</button>
   <div id="qrcode"></div>
 
   <script>
-    // Function to generate QR code and refresh every 15 seconds
-    function generateQRCodeAndRefresh() {
+    document.getElementById('generateQR').addEventListener('click', function() {
       getLocationAndGenerateQR();
-
-      // Refresh page every 15 seconds
-      setInterval(function() {
-        location.reload();
-      }, 15000); // 15 seconds in milliseconds
-    }
-
-    // Call the function initially
-    generateQRCodeAndRefresh();
+    });
 
     function getLocationAndGenerateQR() {
       if (navigator.geolocation) {
