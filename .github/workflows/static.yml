@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance System</title>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+</head>
+<body>
+    <div id="qrcode"></div>
+    <button onclick="generateQRCodeAndRefresh()">Generate QR Code</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial QR code generation upon loading the page
+            generateQRCodeAndRefresh();
+
+            // Adding pagehide instead of unload for modern browsers
+            window.addEventListener('pagehide', function() {
+                console.log('Page is being hidden. Perform any cleanup here.');
+            });
+        });
+
+        function generateQRCodeAndRefresh() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    generateQRCode(position.coords.latitude, position.coords.longitude);
+                }, function(error) {
+                    alert('Geolocation error: ' + error.message);
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function generateQRCode(latitude, longitude) {
+            var employeeName = "John Doe"; // Adjust as necessary
+            var subject = "Attendance Check-in for " + employeeName;
+            var body = "Latitude: " + latitude + "\nLongitude: " + longitude;
+            var encodedBody = encodeURIComponent(body);
+            var url = "mailto:attendance@example.com?subject=" + encodeURIComponent(subject) + "&body=" + encodedBody;
+
+            new QRCode(document.getElementById('qrcode'), {
+                text: url,
+                width: 200,
+                height: 200
+            });
+        }
+    </script>
+</body>
+</html>
